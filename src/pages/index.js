@@ -1,10 +1,18 @@
 import React from "react"
 import { graphql, Link } from "gatsby"
+import styled from 'styled-components';
 
 import Layout from "../components/layout"
-import Image from "../components/image"
 import SEO from "../components/seo"
-import { node } from "prop-types"
+
+const BlogLink = styled(Link)`
+    text-decoration: none;
+`
+
+const BlogTitle = styled.h3`
+    margin-bottom: 20;
+    color: blue;
+`
 
 export default ({ data }) => {
     console.log(data)
@@ -17,7 +25,9 @@ export default ({ data }) => {
               {
                   data.allMarkdownRemark.edges.map(({node}) => (
                       <div key={node.id}>
-                        <span>{node.frontmatter.title} - {node.frontmatter.date}</span>
+                        <BlogLink to={node.fields.slug}>
+                            <BlogTitle>{node.frontmatter.title} - {node.frontmatter.date}</BlogTitle>
+                        </BlogLink>
                         <p>{node.excerpt}</p>
                       </div>
                   ))
@@ -29,7 +39,7 @@ export default ({ data }) => {
 
 export const query = graphql`
 query {
-    allMarkdownRemark {
+    allMarkdownRemark(sort: { fields: [frontmatter___date], order: DESC}) {
       totalCount  
       edges {
         node {
@@ -39,7 +49,9 @@ query {
             date
             title
           }
-          html
+          fields {
+              slug
+          }
           excerpt
         }
       }
